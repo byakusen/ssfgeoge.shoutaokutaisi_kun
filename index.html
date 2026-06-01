@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>太子くん 〜飛鳥ものしり問答〜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Maru+Gothic:wght@500;700;900&family=Klee+One:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sumi:#181423;       /* 墨（やや紫がかった夜の色） */
+    --sumi2:#221a2e;
+    --kin:#d9a441;        /* 金 */
+    --kin-akarui:#f2cd6b;
+    --aka:#b8402e;        /* 朱（法隆寺の柱の色） */
+    --aka-fuka:#7d241c;
+    --washi:#f4ead6;      /* 和紙 */
+    --washi-kage:#e7d8ba;
+    --murasaki:#6f4f96;   /* 紫（高貴な色） */
+    --midori:#5c7a4a;     /* 緑（せいかいの色） */
+    --sumi-usu:rgba(244,234,214,.7);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    font-family:'Zen Maru Gothic',sans-serif;
+    background:
+      radial-gradient(ellipse at 50% -10%, #3a2c4d 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 120%, #271d2e 0%, transparent 55%),
+      var(--sumi);
+    color:var(--washi);
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* 和紙テクスチャ風のノイズ */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+    pointer-events:none;z-index:0;
+  }
+
+  /* ヘッダー（のぼり旗風） */
+  header{
+    position:relative;z-index:2;
+    text-align:center;
+    padding:18px 16px 10px;
+    border-bottom:3px solid var(--kin);
+    background:linear-gradient(180deg, rgba(111,79,150,.40), transparent);
+  }
+  .mon{
+    display:inline-flex;align-items:center;gap:14px;
+  }
+  .mon-maru{
+    width:46px;height:46px;border-radius:50%;
+    border:3px solid var(--kin);
+    display:grid;place-items:center;
+    font-family:'Yuji Syuku',serif;font-size:24px;color:var(--kin-akarui);
+    background:radial-gradient(circle,#3a2c4d,#181423);
+  }
+  h1{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(28px,4.2vw,52px);
+    color:var(--kin-akarui);
+    letter-spacing:.12em;
+    text-shadow:0 2px 0 #000,0 0 18px rgba(217,164,65,.35);
+  }
+  .sub{
+    font-size:clamp(13px,1.5vw,18px);
+    color:var(--sumi-usu);
+    margin-top:4px;letter-spacing:.18em;
+  }
+
+  /* メイン舞台 */
+  main{
+    position:relative;z-index:2;
+    flex:1;
+    width:min(1100px,94vw);
+    margin:0 auto;
+    padding:22px 0 30px;
+    display:flex;flex-direction:column;gap:20px;
+  }
+
+  /* 太子の語り場 */
+  .stage{
+    display:flex;align-items:flex-start;gap:22px;
+  }
+  .taishi{
+    flex:0 0 auto;
+    width:clamp(120px,15vw,180px);
+    text-align:center;
+  }
+  .face{
+    width:clamp(120px,15vw,180px);
+    height:clamp(120px,15vw,180px);
+    border-radius:50%;
+    overflow:hidden;
+    background:#221a2e;
+    border:5px solid var(--kin);
+    box-shadow:0 0 0 4px var(--sumi),0 10px 30px rgba(0,0,0,.5);
+    position:relative;
+    transition:transform .25s;
+  }
+  .face img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .face-fallback{
+    display:none;
+    width:100%;height:100%;
+    align-items:center;justify-content:center;
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(20px,2.6vw,32px);line-height:1.15;
+    color:var(--kin-akarui);letter-spacing:.05em;
+    background:radial-gradient(circle at 50% 38%, #3a2c4d, #181423);
+  }
+  .face.no-img .face-fallback{display:flex;}
+  .face.talk{animation:nod .6s ease;}
+  @keyframes nod{0%,100%{transform:translateY(0)}30%{transform:translateY(6px) rotate(-2deg)}60%{transform:translateY(0) rotate(2deg)}}
+  .name-tag{
+    margin-top:10px;font-family:'Yuji Syuku',serif;
+    font-size:clamp(16px,2vw,24px);color:var(--kin-akarui);letter-spacing:.1em;
+  }
+
+  /* 吹き出し（巻物風） */
+  .scroll{
+    flex:1;position:relative;
+    background:linear-gradient(180deg,var(--washi),var(--washi-kage));
+    color:var(--sumi);
+    border-radius:14px;
+    padding:26px 30px;
+    min-height:170px;
+    box-shadow:0 12px 34px rgba(0,0,0,.45),inset 0 0 0 3px rgba(111,79,150,.25);
+    border:2px solid var(--kin);
+  }
+  .scroll::before{ /* 吹き出しのしっぽ */
+    content:"";position:absolute;left:-18px;top:48px;
+    border-style:solid;border-width:14px 18px 14px 0;
+    border-color:transparent var(--kin) transparent transparent;
+  }
+  .scroll .answer{
+    font-family:'Klee One',serif;
+    font-size:clamp(20px,2.6vw,32px);
+    line-height:1.75;font-weight:600;
+    letter-spacing:.02em;
+  }
+  .scroll .answer .em{color:var(--aka-fuka);font-weight:700;}
+  .cursor{display:inline-block;width:.5em;background:var(--aka);animation:blink .7s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0}}
+
+  /* 質問エリア */
+  .ask-zone{
+    background:rgba(34,26,46,.7);
+    border:2px solid var(--kin);
+    border-radius:14px;
+    padding:18px 20px;
+  }
+  .ask-zone .label{
+    font-size:clamp(15px,1.7vw,20px);color:var(--kin-akarui);
+    margin-bottom:12px;letter-spacing:.1em;font-weight:700;
+  }
+  .input-row{display:flex;gap:12px;flex-wrap:wrap;}
+  #q{
+    flex:1;min-width:220px;
+    font-family:'Zen Maru Gothic',sans-serif;
+    font-size:clamp(18px,2.2vw,26px);font-weight:500;
+    padding:14px 18px;border-radius:10px;border:none;
+    background:var(--washi);color:var(--sumi);
+  }
+  #q:focus{outline:3px solid var(--kin-akarui);}
+  .btn-ask{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(18px,2.2vw,26px);
+    padding:14px 28px;border:none;border-radius:10px;cursor:pointer;
+    background:linear-gradient(180deg,var(--aka),var(--aka-fuka));
+    color:var(--washi);letter-spacing:.1em;
+    box-shadow:0 4px 0 #511712,0 6px 14px rgba(0,0,0,.4);
+    transition:transform .08s;
+  }
+  .btn-ask:active{transform:translateY(4px);box-shadow:0 1px 0 #511712;}
+
+  /* おすすめ問い */
+  .topics{margin-top:8px;}
+  .topics .t-label{font-size:clamp(13px,1.5vw,17px);color:var(--sumi-usu);margin:6px 2px 12px;letter-spacing:.08em;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;}
+  .chip{
+    font-family:'Zen Maru Gothic',sans-serif;font-weight:700;
+    font-size:clamp(15px,1.8vw,21px);
+    padding:11px 18px;border-radius:999px;cursor:pointer;
+    background:rgba(244,234,214,.08);
+    color:var(--washi);
+    border:2px solid var(--kin);
+    transition:all .15s;
+  }
+  .chip:hover{background:var(--kin);color:var(--sumi);transform:translateY(-2px);}
+
+  /* タブ切りかえ */
+  .tabs{
+    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+    position:relative;z-index:2;width:min(1100px,94vw);margin:16px auto 0;
+  }
+  .tab{
+    font-family:'Yuji Syuku',serif;font-size:clamp(16px,2vw,22px);
+    padding:10px 26px;border-radius:14px 14px 0 0;cursor:pointer;
+    background:rgba(244,234,214,.08);color:var(--washi);
+    border:2px solid var(--kin);border-bottom:none;letter-spacing:.1em;transition:all .15s;
+  }
+  .tab:hover{background:rgba(217,164,65,.3);}
+  .tab.active{background:var(--kin);color:var(--sumi);}
+
+  .view{display:none;flex-direction:column;gap:20px;}
+  .view.active{display:flex;}
+
+  /* クイズ */
+  .quiz-card{
+    background:linear-gradient(180deg,var(--washi),var(--washi-kage));
+    color:var(--sumi);border:2px solid var(--kin);border-radius:14px;padding:26px 30px;
+    box-shadow:0 12px 34px rgba(0,0,0,.45);
+  }
+  .quiz-lead{font-family:'Yuji Syuku',serif;font-size:clamp(22px,3vw,34px);color:var(--aka-fuka);margin-bottom:10px;text-align:center;}
+  .quiz-desc{font-size:clamp(16px,2vw,22px);margin-bottom:22px;text-align:center;line-height:1.6;}
+  #quiz-start,#quiz-end{text-align:center;}
+  #quiz-start .btn-ask,#quiz-end .btn-ask{margin-top:6px;}
+  .quiz-meta{display:flex;justify-content:space-between;font-weight:700;color:var(--aka-fuka);font-size:clamp(15px,1.8vw,20px);margin-bottom:14px;}
+  .quiz-q{font-family:'Klee One',serif;font-size:clamp(20px,2.6vw,30px);font-weight:600;line-height:1.6;margin-bottom:20px;}
+  .opts{display:flex;flex-direction:column;gap:12px;}
+  .opt{
+    font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:clamp(17px,2.1vw,24px);
+    text-align:left;padding:14px 20px;border-radius:10px;cursor:pointer;
+    background:#fff;color:var(--sumi);border:2px solid var(--washi-kage);transition:all .12s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--kin);transform:translateX(3px);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{background:#dff0d2;border-color:var(--midori);color:#2f4a23;}
+  .opt.wrong{background:#f6d9d4;border-color:var(--aka);color:var(--aka-fuka);}
+  .quiz-feedback{margin-top:18px;font-size:clamp(16px,2vw,22px);line-height:1.7;min-height:1em;}
+  .quiz-feedback .mark{font-family:'Yuji Syuku',serif;font-size:1.3em;margin-right:.3em;vertical-align:-.05em;}
+  .quiz-feedback .ok{color:var(--midori);}
+  .quiz-feedback .ng{color:var(--aka);}
+  #quizNextBtn{margin-top:20px;}
+  .quiz-result-score{font-family:'Yuji Syuku',serif;font-size:clamp(28px,5vw,48px);color:var(--aka-fuka);text-align:center;margin:14px 0 10px;}
+  .quiz-result-comment{font-size:clamp(17px,2.1vw,24px);line-height:1.7;text-align:center;margin-bottom:22px;}
+
+  /* 年表 */
+  .timeline{position:relative;padding:6px 0;margin:0 0 0 8px;border-left:4px solid var(--kin);}
+  .tl-item{position:relative;padding:0 0 22px 28px;}
+  .tl-item::before{content:"";position:absolute;left:-12px;top:5px;width:16px;height:16px;border-radius:50%;background:var(--kin);border:3px solid var(--sumi);}
+  .tl-year{font-family:'Yuji Syuku',serif;font-size:clamp(18px,2.3vw,26px);color:var(--kin-akarui);letter-spacing:.06em;}
+  .tl-body{background:linear-gradient(180deg,var(--washi),var(--washi-kage));color:var(--sumi);border:2px solid var(--kin);border-radius:12px;padding:12px 18px;margin-top:6px;box-shadow:0 6px 18px rgba(0,0,0,.35);}
+  .tl-title{font-weight:700;font-size:clamp(17px,2.1vw,23px);color:var(--aka-fuka);margin-bottom:4px;}
+  .tl-desc{font-size:clamp(14px,1.8vw,19px);line-height:1.6;}
+  .tl-item.future::before{background:var(--murasaki);}
+  .tl-item.future .tl-year{color:#c9a9ec;}
+  .tl-note{font-size:clamp(12px,1.5vw,16px);color:var(--sumi-usu);margin-top:4px;letter-spacing:.04em;line-height:1.6;}
+
+  footer{
+    position:relative;z-index:2;text-align:center;
+    font-size:13px;color:rgba(244,234,214,.4);
+    padding:14px;letter-spacing:.1em;
+  }
+  @media(max-width:560px){
+    .stage{flex-direction:column;align-items:center;}
+    .scroll::before{display:none;}
+    .taishi{order:-1;}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="mon">
+      <span class="mon-maru">聖</span>
+      <div>
+        <h1>太子くん</h1>
+        <div class="sub">あすか ものしり もんどう</div>
+      </div>
+      <span class="mon-maru">徳</span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-view="qa">もんどう</button>
+    <button class="tab" data-view="quiz">クイズ</button>
+    <button class="tab" data-view="timeline">ねんぴょう</button>
+  </nav>
+
+  <main>
+    <section id="view-qa" class="view active">
+    <div class="stage">
+      <div class="taishi">
+        <div class="face" id="face">
+          <img src="https://github.com/byakusen/gogelgelge.shoutoku_taisi_kun/blob/main/shoutokutaisi.png?raw=true" alt="聖徳太子"
+               onerror="this.style.display='none';this.parentNode.classList.add('no-img');">
+          <span class="face-fallback">聖<br>徳<br>太<br>子</span>
+        </div>
+        <div class="name-tag">聖徳太子</div>
+      </div>
+      <div class="scroll">
+        <div class="answer" id="answer"></div>
+      </div>
+    </div>
+
+    <div class="ask-zone">
+      <div class="label">▼ 太子くんに きいてみよう</div>
+      <div class="input-row">
+        <input id="q" type="text" placeholder="しつもんを 入力してね（れい：十七条憲法ってなに？）" autocomplete="off">
+        <button class="btn-ask" id="askBtn">きく</button>
+      </div>
+    </div>
+    </section>
+
+    <section id="view-quiz" class="view">
+      <div id="quiz-start" class="quiz-card">
+        <p class="quiz-lead">聖徳太子クイズに ちょうせん！</p>
+        <p class="quiz-desc">ぜんぶで 10問。三つの中から こたえを えらんでね。<br>太子くんが まる・ばつ を おしえてくれます。</p>
+        <button class="btn-ask" id="quizStartBtn">スタート</button>
+      </div>
+      <div id="quiz-play" class="quiz-card" style="display:none;">
+        <div class="quiz-meta"><span id="quiz-count"></span><span id="quiz-score-live"></span></div>
+        <p class="quiz-q" id="quiz-q"></p>
+        <div class="opts" id="quiz-opts"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="btn-ask" id="quizNextBtn" style="display:none;">つぎへ</button>
+      </div>
+      <div id="quiz-end" class="quiz-card" style="display:none;">
+        <p class="quiz-lead">けっか はっぴょう</p>
+        <p class="quiz-result-score" id="quiz-result-score"></p>
+        <p class="quiz-result-comment" id="quiz-result-comment"></p>
+        <button class="btn-ask" id="quizRetryBtn">もういちど</button>
+      </div>
+    </section>
+
+    <section id="view-timeline" class="view">
+      <div class="timeline" id="timeline"></div>
+      <p class="tl-note">※年は、おもに言い伝え（『日本書紀』など）にもとづくものです。むらさきの印は、太子が亡くなったあとのできごとです。</p>
+    </section>
+  </main>
+
+  <footer>クラスで楽しむ 飛鳥もんどうアプリ／答えは小学生むけにやさしくまとめています（参考：ウィキペディア「聖徳太子」）</footer>
+
+<script>
+// ===== 聖徳太子の知識（小学4年生むけ・太子口調）／全100問 =====
+// キーワードに当てはまる問いが来たら、その答えを返す。
+const KB = [
+  // ---- 生い立ち・家族 ----
+  {keys:["生まれ","うまれ","いつ生","何年生","誕生","生年","574"],
+   a:"わたくしが生まれたのは574年、いまの奈良県の飛鳥(あすか)というところです。父は用明天皇(ようめいてんのう)、母は穴穂部間人皇女(あなほべのはしひとのひめみこ)。古墳時代から飛鳥時代へとうつるころに、皇族の子として生まれました。"},
+  {keys:["名前","なまえ","本名","ほんみょう","厩戸","うまやと","豊聡耳","とよとみみ","呼び名","別名"],
+   a:"わたくしの本名は「厩戸王(うまやとおう)」、または「厩戸皇子(うまやとのみこ)」といいます。「豊聡耳(とよとみみ)」とも呼ばれました。じつは「聖徳太子」という名は、わたくしが亡くなったずっとあとの世の人がつけた、たたえる名前なのですよ。"},
+  {keys:["父","ちち","おとう","用明","ようめい"],
+   a:"わたくしの父は用明天皇(ようめいてんのう)です。仏教を大切にした天皇で、わたくしもその心を受けつぎました。父は天皇の位についてまもなく、病でこの世を去りました。"},
+  {keys:["母","はは","おかあ","穴穂部","間人","はしひと"],
+   a:"わたくしの母は穴穂部間人皇女(あなほべのはしひとのひめみこ)です。父も母も、欽明天皇(きんめいてんのう)という大王(おおきみ)の子で、わたくしは天皇家のちすじを強く受けた皇子でした。"},
+  {keys:["蘇我氏","そがし","血","ちすじ","親せき","血縁","けつえん"],
+   a:"わたくしは蘇我氏(そがし)という、当時とても力の強い豪族(ごうぞく)と深いちすじでつながっていました。だからこそ蘇我馬子(そがのうまこ)とは親せきで、力を合わせて政治を行えたのです。"},
+  {keys:["厩","うまや","馬小屋","名の由来","なぜ厩戸","生まれた場所","どこで生まれ"],
+   a:"「厩戸(うまやと)」という名は、わたくしが馬小屋(うまや)の戸の前で生まれた、という言い伝えからついたといわれます。ただし、これは後の世につくられたお話だという説もあるのですよ。"},
+  {keys:["妻","つま","お后","きさき","膳","かしわで","結婚","けっこん","菩岐々美"],
+   a:"わたくしの妃(きさき)のひとりに、膳部菩岐々美郎女(かしわでのほききみのいらつめ)という方がいました。わたくしが病でたおれたとき、その方も看病のすえ、わたくしの前の日に亡くなり、いっしょのお墓にねむっています。"},
+  {keys:["子","こども","息子","むすこ","山背","やましろ","跡継","あとつぎ","おおえ"],
+   a:"わたくしの子に、山背大兄王(やましろのおおえのおう)がいました。かしこく人望もあつい子でしたが、わたくしの死後、蘇我氏の争いにまきこまれ、悲しい最期をむかえることになりました。"},
+  {keys:["時代","じだい","飛鳥","あすか","いつの人","いつの時代"],
+   a:"わたくしが生きたのは「飛鳥時代(あすかじだい)」というころです。いまの奈良県の飛鳥という地に都があり、中国や朝鮮から進んだ文化が次々と入ってきた、たいへん新しい時代でした。"},
+  {keys:["推古","すいこ","おば","叔母","関係","女帝"],
+   a:"推古天皇(すいこてんのう)は、わたくしのおば(叔母)にあたる方で、日本ではじめての女性の天皇です。わたくしはこの推古天皇をおたすけする「摂政(せっしょう)」となって、いっしょに国をおさめました。"},
+
+  // ---- 政治・役目 ----
+  {keys:["摂政","せっしょう","役目","やくめ","補佐","ほさ","たすけ役"],
+   a:"「摂政(せっしょう)」とは、天皇のかわりに、また天皇をおたすけして政治を行う役目のことです。わたくしは20歳のころ、おばの推古天皇の摂政となり、新しい国づくりに力をつくしました。"},
+  {keys:["初めての女帝","はじめての女","女の天皇","女性の天皇","女帝とは"],
+   a:"推古天皇は、日本の歴史ではじめての女性の天皇(女帝)です。蘇我馬子に立てられて位につき、わたくしと馬子がそれをささえました。三人の力で、新しい国のかたちをつくっていったのです。"},
+  {keys:["馬子","うまこ","蘇我馬子","協力","いっしょに政治","大臣","おおおみ"],
+   a:"蘇我馬子(そがのうまこ)は、当時いちばん力のあった大臣(おおおみ)です。わたくしは馬子と協力して政治を行いました。仏教を広めることや、新しい制度づくりも、馬子とともにすすめたのですよ。"},
+  {keys:["冠位十二階","かんいじゅうにかい","冠位","かんい","十二階","じゅうにかい"],
+   a:"「冠位十二階(かんいじゅうにかい)」は、603年にわたくしが定めた制度です。役人を12の位(くらい)に分け、それぞれちがう色の冠(かんむり)をかぶらせました。家がらではなく、その人の力や手がらで位を決めたのが、新しいところです。"},
+  {keys:["徳仁礼信義智","とくじんれいしんぎち","かんむりの色","冠の色","何階","六つの位","位の名"],
+   a:"冠位十二階の位は、「徳(とく)・仁(じん)・礼(れい)・信(しん)・義(ぎ)・智(ち)」の六つに、それぞれ大・小をつけて、ぜんぶで十二の位としました。位ごとに冠の色がちがい、ひと目でその人の位がわかるようにしたのです。"},
+  {keys:["なぜ冠位","冠位の目的","才能","能力","のうりょく","家がら","いえがら"],
+   a:"冠位十二階をつくったわけは、家がらに関係なく、力のある人を役人に取り立てるためです。それまでは生まれた家で役目が決まっていましたが、わたくしは「できる人をえらびたい」と考えました。天皇を中心とした強い国にするための工夫でもあったのです。"},
+  {keys:["十七条憲法","じゅうしちじょう","憲法","けんぽう","きまり","役人の心がまえ"],
+   a:"「十七条憲法(じゅうしちじょうけんぽう)」は、604年にわたくしが定めた、役人の心がまえを示したきまりです。今の法律のように罰(ばつ)を決めたものではなく、「役人はこういう心で働きなさい」という、いわば心のおしえなのですよ。"},
+  {keys:["和を以て","わをもって","第一条","いちじょう","一条","なかよく","協力が大切","和"],
+   a:"十七条憲法の第一条は「和を以て貴しと為す(わをもってとうとしとなす)」です。意味は「みんなで仲よく、力を合わせることがいちばん大切だ」ということ。今でも日本の人が大事にしている心ですね。"},
+  {keys:["三宝","さんぼう","篤く","あつく","第二条","にじょう","二条","仏を敬"],
+   a:"十七条憲法の第二条は「篤く三宝を敬え(あつくさんぼうをうやまえ)」です。三宝とは「仏(ほとけ)・法(おしえ)・僧(おぼうさん)」の三つのこと。わたくしは仏教をとても大切にしていたので、それを役人にもすすめたのです。"},
+  {keys:["詔","みことのり","第三条","さんじょう","三条","天皇に従","承詔"],
+   a:"十七条憲法の第三条は「詔(みことのり)を承(うけたまわ)りては必ず謹(つつし)め」です。「天皇の命令はかならず守りなさい」という意味です。天皇を中心とした、まとまりのある国にしたいという願いがこめられています。"},
+  {keys:["天皇中心","てんのうちゅうしん","中心","国づくり","くにづくり","目ざした"],
+   a:"わたくしが目ざしたのは、天皇を中心とした、まとまりのある国です。当時は豪族(ごうぞく)たちがそれぞれ力をもって争うことがありました。冠位十二階や十七条憲法は、みんなが天皇のもとに力を合わせるための工夫だったのです。"},
+  {keys:["中央集権","ちゅうおうしゅうけん","ひとつにまとめ","まとめる"],
+   a:"わたくしのしたことは、ばらばらだった力を天皇のもとにひとつにまとめる、という方向のものでした。むずかしい言葉では「中央集権(ちゅうおうしゅうけん)」といいます。のちの世の、しっかりした国のしくみの土台となりました。"},
+  {keys:["国記","こっき","天皇記","てんのうき","歴史書","れきしのほん","記録","本をつくった"],
+   a:"わたくしは620年ごろ、蘇我馬子とともに『天皇記(てんのうき)』『国記(こっき)』という歴史の本をつくりました。国のなりたちを書きのこそうとしたのです。残念ながら、その後の争いで燃えてしまい、今は残っていません。"},
+  {keys:["池","いけ","道","みち","大道","だいどう","屯倉","みやけ","工事","土木","ため池"],
+   a:"わたくしは国を豊かにするため、各地に田んぼ(屯倉・みやけ)をおき、ため池をいくつもつくりました。また難波(なにわ)から飛鳥まで、まっすぐな大きな道(大道)を通しました。これは日本でいちばん古い、国がつくった道だといわれています。"},
+  {keys:["何年に作","いつ作","年号","ねんごう","603","604","607","年を覚え"],
+   a:"おもなできごとの年を覚えておくとよいですよ。603年に冠位十二階、604年に十七条憲法、607年に遣隋使(けんずいし)を送り、同じころ法隆寺を建てました。飛鳥時代の、とても大切な年たちです。"},
+
+  // ---- 外国との交わり ----
+  {keys:["遣隋使","けんずいし","隋","ずい","中国に使い","使者を送","つかい"],
+   a:"「遣隋使(けんずいし)」とは、当時の中国であった「隋(ずい)」という大きな国へ送った使者のことです。607年、わたくしは小野妹子(おののいもこ)を送りました。隋の進んだ文化や制度を学び、日本に持ち帰るためです。"},
+  {keys:["小野妹子","いもこ","おののいもこ","だれを送"],
+   a:"小野妹子(おののいもこ)は、わたくしが隋へ送った使者です。「妹子(いもこ)」という名ですが、りっぱな男の人ですよ。海をこえて遠い隋までわたり、国の手紙(国書)をとどける、大切な役目をはたしてくれました。"},
+  {keys:["日出処","ひいづる","ひいず","国書","こくしょ","手紙","てがみ","天子"],
+   a:"妹子が隋にとどけた手紙には「日出(ひいず)る処(ところ)の天子(てんし)、書を日没(ひぼっ)する処の天子に致(いた)す」と書かれていました。「東の国の王から、西の国の王へ」という意味で、隋と日本を対等(たいとう)にあつかおうとした、ほこり高い言葉なのです。"},
+  {keys:["煬帝","ようだい","隋の皇帝","こうてい","おこった","怒っ","腹を立て"],
+   a:"隋の皇帝は煬帝(ようだい)という人でした。「日出る処の天子」という手紙を読んで、「自分と同じ天子とはなにごとか」と、たいそう腹を立てたと伝わります。それでも日本との行き来は続き、文化の交流がすすみました。"},
+  {keys:["裴世清","はいせいせい","隋から来た","使者が来","返礼"],
+   a:"翌年、隋から裴世清(はいせいせい)という使者が、お返しに日本へやってきました。日本も隋を国として正しくあつかい、たがいに使いをやりとりするようになったのです。妹子は裴世清を送りとどけるため、ふたたび隋へわたりました。"},
+  {keys:["学んだ","まなんだ","持ち帰","何を学","隋から学"],
+   a:"遣隋使によって、隋の進んだ政治のしくみ、仏教、学問、暦(こよみ)など、たくさんのことが日本に伝わりました。わたくしは、よその国のよいところを学び、日本の国づくりに生かそうと考えていたのです。"},
+  {keys:["留学生","りゅうがくせい","高向玄理","たかむこ","南淵請安","みなみぶち","旻","学びにいった"],
+   a:"遣隋使には、長く隋にとどまって学ぶ「留学生(りゅうがくせい)」も同行しました。高向玄理(たかむこのげんり)や南淵請安(みなみぶちのしょうあん)などです。かれらが学んで持ち帰った知識は、のちの「大化の改新(たいかのかいしん)」にも生かされました。"},
+  {keys:["対等","たいとう","外交","がいこく","がいこう","ほこり高い"],
+   a:"それまで日本は、中国に対してへりくだって使いを送っていました。ところがわたくしは、「東の天子」と名のり、隋と肩をならべる立場でつき合おうとしました。これはとても勇気のいる、ほこり高いおこないだったのです。"},
+  {keys:["新羅","しらぎ","しんら","遠征","えんせい","朝鮮","ちょうせん"],
+   a:"わたくしの時代、朝鮮半島には新羅(しらぎ)などの国がありました。わたくしは新羅へ軍を送ろうとしたこともありますが、思うようにはいきませんでした。当時の日本は、まわりの国々との関係に気をつかっていたのです。"},
+  {keys:["慧慈","えじ","師","せんせい","先生","高句麗","こうくり","お坊さんに習"],
+   a:"高句麗(こうくり)から来た慧慈(えじ)というお坊さんは、わたくしの仏教の先生でした。慧慈はわたくしに「隋は仏法を大切にする、すばらしい国だ」と教えてくれました。わたくしの仏教への思いは、こうした師に育てられたのです。"},
+
+  // ---- 仏教・お寺 ----
+  {keys:["仏教","ぶっきょう","広めた","ひろめ","信仰","しんこう","ほとけ"],
+   a:"わたくしは仏教(ぶっきょう)をとても大切にし、日本に広めることに力をつくしました。仏の教えで人の心を正しくし、みんなが助け合う国をつくりたいと願ったのです。寺を建て、お経を学び、人々に仏の道を示しました。"},
+  {keys:["四天王寺","してんのうじ","大阪","おおさか","寺を建","最初の寺"],
+   a:"四天王寺(してんのうじ)は、わたくしが建てたお寺で、いまの大阪市にあります。物部氏(もののべし)との戦いのとき「勝ったらお寺を建てます」と仏に誓い、その約束を守って建てたのです。"},
+  {keys:["四箇院","しかいん","施薬院","せやくいん","悲田院","ひでんいん","病気の人","貧しい人","福祉","助け合い"],
+   a:"四天王寺には「四箇院(しかいん)」というしくみをつくったと伝わります。びょうきの人をなおす施薬院(せやくいん)や療病院、まずしい人やみなしごを助ける悲田院(ひでんいん)などです。仏の心で、こまっている人を助けようとしたのですよ。"},
+  {keys:["法隆寺","ほうりゅうじ","斑鳩","いかるが","木造","世界最古","世界遺産","せかいいさん"],
+   a:"法隆寺(ほうりゅうじ)は、いまの奈良県斑鳩町(いかるがちょう)にある、わたくしゆかりのお寺です。今に残る世界でいちばん古い木造の建物として知られ、世界遺産にもなっています。飛鳥時代の美しさを、今に伝えてくれています。"},
+  {keys:["三経義疏","さんぎょうぎしょ","お経の本","注釈","ちゅうしゃく"],
+   a:"わたくしは仏教のお経をくわしく研究し、その解説書を書いたと伝わります。『法華経(ほけきょう)』『勝鬘経(しょうまんぎょう)』『維摩経(ゆいまぎょう)』の三つで、あわせて「三経義疏(さんぎょうぎしょ)」と呼ばれています。"},
+  {keys:["法華経","ほけきょう","義疏","真筆","しんぴつ","自筆","じひつ"],
+   a:"三経義疏のひとつ『法華経義疏(ほけきょうぎしょ)』は、わたくしが自分の手で書いたものと伝えられています。もしほんとうなら、日本に残るいちばん古い書き物のひとつとして、たいへん貴重なものなのですよ。"},
+  {keys:["興隆","こうりゅう","仏教興隆","仏教をすすめ","594"],
+   a:"594年、推古天皇は「仏教をさかんにしなさい」という詔(みことのり)を出しました。これを受けて、豪族たちもきそって寺を建てるようになりました。わたくしと馬子のすすめた仏教は、こうして国じゅうに広がっていったのです。"},
+  {keys:["物部","もののべ","守屋","もりや","戦い","丁未","ていび","戦争","いくさ"],
+   a:"わたくしが若いころ、仏教を受け入れるかどうかで大きな争いが起こりました。仏教に反対する物部守屋(もののべのもりや)と、賛成する蘇我馬子が戦ったのです(丁未の変・ていびのへん)。わたくしは馬子の側につき、この戦いに勝ちました。"},
+  {keys:["四天王","してんのう","像","ぞう","誓い","ちかい","祈り","いのり","木を削"],
+   a:"物部守屋との戦いで、味方は何度もおし返されました。そこでわたくしは木を削って四天王(してんのう)という仏の像をつくり、「勝てたらお寺を建てます」と誓って祈りました。やがて味方は勝ち、わたくしはその誓いどおり四天王寺を建てたのです。"},
+  {keys:["崇仏","排仏","はいぶつ","反対","賛成","対立のわけ","なぜ争"],
+   a:"当時、仏教は新しく外国から伝わった教えでした。「日本古来の神を大切にすべきだ」と反対する物部氏(排仏派)と、「仏教を受け入れよう」とする蘇我氏(崇仏派)が、はげしく対立したのです。わたくしは仏教を受け入れる側に立ちました。"},
+  {keys:["七大寺","しちだいじ","七つの寺","いくつ建","何寺","太子建立"],
+   a:"わたくしが建てたとされるお寺は、四天王寺と法隆寺をはじめ「太子建立七大寺(たいしこんりゅうしちだいじ)」と呼ばれて七つ伝わっています。ただし、後の世にわたくしの名を借りただけのお寺も多く、確かなのは法隆寺と四天王寺だ、という学者もいます。"},
+  {keys:["中宮寺","ちゅうぐうじ","橘寺","たちばなでら","広隆寺","こうりゅうじ","法起寺","ほうきじ","ほかの寺"],
+   a:"七大寺には、中宮寺(ちゅうぐうじ)、橘寺(たちばなでら)、広隆寺(こうりゅうじ)、法起寺(ほうきじ)なども数えられます。橘寺はわたくしが生まれた地ともいわれ、広隆寺には今も古い仏像が残っています。"},
+  {keys:["斑鳩宮","いかるがのみや","住んだ","すまい","引っ越","移り住","605"],
+   a:"わたくしは605年ごろ、斑鳩(いかるが)というところに「斑鳩宮(いかるがのみや)」をつくって住みました。法隆寺のすぐそばです。都の中心からすこしはなれたこの地で、仏の道を学び、政治について考えたのです。"},
+  {keys:["観音","かんのん","化身","けしん","生まれ変わり","菩薩","ぼさつ","神様あつかい"],
+   a:"後の世の人々は、わたくしを観音菩薩(かんのんぼさつ)という仏の生まれ変わりだと考え、ありがたくおがむようになりました。これを「太子信仰(たいししんこう)」といいます。わたくし自身がおがまれる対象になったのですよ。"},
+  {keys:["仏教はどこから","伝来","でんらい","百済","くだら","いつ伝わ"],
+   a:"仏教は、わたくしが生まれる少し前、朝鮮半島の百済(くだら)という国から日本に伝えられました。新しい教えをめぐって国がゆれるなか、わたくしはこれを受け入れ、国づくりの柱にしようと考えたのです。"},
+
+  // ---- 伝説・人がら ----
+  {keys:["豊聡耳","とよとみみ","一度に","いちどに","同時に","聞き分け","耳がよ","みみ"],
+   a:"わたくしには「豊聡耳(とよとみみ)」という呼び名があります。一度にたくさんの人がうったえても、その言葉をひとつも聞きもらさず、すべてに正しく答えたという言い伝えからついた名です。「耳がよくさとい」という意味なのですよ。"},
+  {keys:["受胎","じゅたい","母の口","お告げ","救世観音から","生まれる前","不思議な生まれ"],
+   a:"わたくしの母は、救世観音(ぐぜかんのん)という仏が口から体に入って、わたくしをみごもった、という不思議な言い伝えがあります。これは、わたくしをとくべつな人としてたたえるために、後の世につくられたお話だと考えられています。"},
+  {keys:["甲斐","かい","黒駒","くろこま","馬","うま","富士山","ふじさん","空を飛"],
+   a:"わたくしには、甲斐の黒駒(かいのくろこま)という名馬に乗って、空高く飛び上がり、富士山(ふじさん)をこえて信濃(しなの)まで行き、三日で都へ帰った、という伝説があります。もちろんお話ですが、わたくしの不思議な力を伝えるものなのですよ。"},
+  {keys:["片岡","かたおか","飢えた","うえた","たおれた人","旅人","たびびと"],
+   a:"ある日、片岡山(かたおかやま)で、おなかをすかせてたおれている旅人に出会いました。わたくしは食べ物と着ていた衣をあたえ、歌をよんでなぐさめました。これは、こまっている人をあわれむわたくしの心を伝える、有名なお話です。"},
+  {keys:["達磨","だるま","だるまだいし","正体","聖は聖を","旅人の正体"],
+   a:"じつはその旅人は、ただの人ではありませんでした。翌日には亡くなっていたのに、お墓を開けると体がなく、衣だけがたたんでありました。人々は「あれは達磨大師(だるまだいし)という偉いお方だったのだ」とおどろき、「聖(ひじり)は聖を知る」と語り伝えたのです。"},
+  {keys:["未来記","みらいき","予言","よげん","先のこと","見通"],
+   a:"わたくしは「先のことを見通す力があった」と伝えられ、「未来記(みらいき)」という予言の書を残したという伝説があります。じっさいにわたくしが書いた証拠はなく、後の世の人がわたくしの名を借りてつくったものなのですよ。"},
+  {keys:["八人","十人","8人","10人","人数","何人の話","三十六人"],
+   a:"一度に聞き分けた人数は、お話によって八人とも十人ともいわれます。さらに「十一歳のとき、三十六人の子の話を同時に聞き取った」というお話まで残っているのですよ。だから「八耳(やつみみ)」とも呼ばれました。"},
+  {keys:["聡明","そうめい","かしこ","頭がいい","天才","てんさい","子どものころ"],
+   a:"わたくしは小さいころから、とてもかしこく、仏の教えを大切にする子どもだったと伝えられています。たくさんの人の話を聞き分けたり、先のことを見通したり——そうした言い伝えが、わたくしのかしこさを今に伝えています。"},
+  {keys:["南嶽","なんがく","慧思","えし","前世","ぜんせ","生まれ変わりの説"],
+   a:"中国に南嶽慧思(なんがくえし)という、たいへん偉いお坊さんがいました。後の世の人は「聖徳太子はその慧思の生まれ変わりだ」と信じたのです。これも、わたくしを仏に近い人としてうやまう、太子信仰のひとつのお話です。"},
+  {keys:["神道","しんとう","神様","かみさま","神社","じんじゃ","鳥居","とりい","神も"],
+   a:"わたくしは仏教を大切にしましたが、日本古来の神々(かみがみ)もうやまいました。神を敬うよう命じる詔も出しています。仏も神も、どちらも大切にする——それが、わたくしの考えた国のすがたでした。"},
+  {keys:["太子信仰","たいししんこう","おがまれ","信仰の対象","太子堂","尊敬され"],
+   a:"わたくしが亡くなったあと、人々はわたくしを仏のような尊いお方としておがむようになりました。これを「太子信仰(たいししんこう)」といいます。各地のお寺に、わたくしの像をまつった「太子堂(たいしどう)」がつくられました。"},
+  {keys:["大工","だいく","守り神","まもりがみ","職人","しょくにん","太子講","たいしこう"],
+   a:"わたくしは法隆寺や四天王寺のような大きな建物づくりに関わったとされることから、大工(だいく)や職人(しょくにん)たちの守り神としてもうやまわれました。職人たちは「太子講(たいしこう)」という集まりを開いて、わたくしをまつったのですよ。"},
+  {keys:["親鸞","しんらん","浄土真宗","じょうどしんしゅう","後の僧","和讃"],
+   a:"後の世の有名なお坊さん、親鸞(しんらん)も、わたくしをとても敬ってくれました。親鸞はわたくしをたたえる歌(和讃・わさん)をたくさんよみ、わたくしを「和国(日本)の教主(きょうしゅ)」と呼びました。"},
+  {keys:["軍神","ぐんしん","戦の神","せんごく","戦国時代","守屋を破"],
+   a:"わたくしは物部守屋との戦いに勝ったことから、戦国時代には「戦の神(軍神・ぐんしん)」としてもうやまわれました。時代によって、人々がわたくしに求めるすがたは、いろいろと変わっていったのです。"},
+  {keys:["評価","ひょうか","時代によって","見方","みかた","変わる","かわる"],
+   a:"わたくしへの評価は、時代によって大きく変わってきました。仏の導き手として、対等外交をした外交家として、平和の憲法をつくった人として——。「太子のすがたは、それぞれの時代を映す鏡だ」と言う学者もいるのですよ。"},
+
+  // ---- お札・お墓・最期 ----
+  {keys:["お札","おさつ","紙幣","しへい","お金","おかね","肖像","えがかれ","何回"],
+   a:"わたくしの顔は、長いあいだ日本のお札(紙幣)にえがかれてきました。百円札にはじまり、千円、五千円、一万円札と、あわせて七回も登場し、これは日本でいちばん多い記録なのですよ。"},
+  {keys:["一万円","いちまんえん","高額","こうがく","代名詞","昔のお札"],
+   a:"とくに有名なのは、昭和のころ(1958年〜1984年)に使われた一万円札です。あまりに長く使われたので、高いお金のことを「聖徳太子」と呼ぶ人もいたほどでした。今は福沢諭吉などにかわっています。"},
+  {keys:["二王子像","におうじぞう","肖像画","しょうぞうが","絵","え","顔","かお"],
+   a:"お札にえがかれたわたくしの顔は、『聖徳太子二王子像(におうじぞう)』という古い絵がもとになっています。ただし、その絵の服装(ふくそう)は後の時代のものだという指摘もあり、ほんとうのわたくしの姿かどうかははっきりしないのです。"},
+  {keys:["墓","はか","お墓","どこに葬","叡福寺","えいふくじ","太子町","磯長"],
+   a:"わたくしのお墓は、いまの大阪府太子町(たいしちょう)にある叡福寺(えいふくじ)のなかにあります。円い形をした古墳で、「磯長墓(しながのはか)」と呼ばれています。今も多くの人がおまいりに来てくれるのですよ。"},
+  {keys:["三骨","さんこつ","一廟","いちびょう","いっしょの墓","だれと眠"],
+   a:"わたくしのお墓には、わたくしと、母の穴穂部間人皇女、妃の膳部菩岐々美郎女の三人がともにねむっています。これを「三骨一廟(さんこついちびょう)」といいます。大切な人とともにねむっているのですよ。"},
+  {keys:["死","しんだ","亡くな","いつ死","享年","きょうねん","何歳","49","622"],
+   a:"わたくしは622年(一説には621年)、49歳でこの世を去りました。前の日には看病してくれていた妃も亡くなり、二人で時をおなじくして旅立つことになりました。志(こころざし)なかばの別れでした。"},
+  {keys:["どこで死","どこで亡","病気","びょうき","斑鳩宮でたお"],
+   a:"わたくしは、自分の住まいであった斑鳩宮(いかるがのみや)で病にたおれ、そのまま亡くなりました。わたくしの死を、多くの人が深く悲しんだと伝えられています。"},
+  {keys:["虚構","きょこう","実在","じつざい","いなかった","本当にいた","作り話","つくり話"],
+   a:"近ごろ、「聖徳太子という偉大なすがたは、後の世の人がつくり上げたものではないか」という説(聖徳太子虚構説)もあります。これは「厩戸王という人がいなかった」という意味ではなく、「すごい伝説の多くは後づけだろう」という考えです。歴史は、今も研究が続いているのですよ。"},
+  {keys:["なぜ有名","どうして有名","有名な理由","名が残"],
+   a:"わたくしが有名なのは、冠位十二階や十七条憲法をつくり、遣隋使を送り、仏教を広めて、天皇中心の新しい国づくりの土台をきずいたからです。一つひとつが、その後の日本に大きな影響をあたえました。だから千年以上たった今も、語りつがれているのですよ。"},
+  {keys:["性格","せいかく","人がら","ひとがら","どんな人"],
+   a:"伝えられるわたくしは、かしこく、おだやかで、こまっている人をあわれむやさしい心の持ち主です。仏の教えを大切にし、人と人が仲よくすることを何より願いました。「和を以て貴しと為す」という言葉に、わたくしの心があらわれています。"},
+  {keys:["何がすごい","どこがすごい","功績","こうせき"],
+   a:"わたくしのすごいところは、「家がらより力のある人を選ぶ」「役人は心正しく働く」「外国とも対等につき合う」といった、新しい考えを次々に形にしたところです。今あたりまえに思えることも、当時はとても新しいことだったのですよ。"},
+  {keys:["まとめ","業績まとめ","したことぜんぶ","やったこと","おもなこと"],
+   a:"わたくしのおもなおこないをまとめましょう。①冠位十二階(603年)、②十七条憲法(604年)、③遣隋使の派遣(607年)、④仏教を広め寺を建てたこと、⑤歴史書の編さん。この五つを覚えておくと、テストもばっちりですよ。"},
+  {keys:["影響","えいきょう","その後","つながり","後の時代"],
+   a:"わたくしの国づくりの考えは、後の世に受けつがれました。遣隋使で学んだ人々の知識は、645年の「大化の改新(たいかのかいしん)」に生かされ、やがて天皇中心の律令(りつりょう)国家へとつながっていったのです。"},
+  {keys:["大化の改新","たいかのかいしん","645","改革","かいかく"],
+   a:"わたくしの死後、645年に「大化の改新」という大きな政治の改革が行われました。これは、わたくしや遣隋使たちがまいた種が実ったものといえます。天皇を中心とした国づくりは、こうして一歩ずつ進んでいったのです。"},
+  {keys:["メッセージ","子どもたちへ","みんなへ","ひとこと","応援","おうえん"],
+   a:"みなさん、よく学んでいますね。わたくしが大切にしたのは「和(わ)」——みんなで仲よく、力を合わせる心です。人の話をよく聞き、こまっている人にやさしくする。それができれば、きっとよい世の中になりますよ。"},
+
+  // ---- もっとくわしく ----
+  {keys:["飛鳥時代とは","あすかじだいとは","どんな時代","飛鳥って"],
+   a:"「飛鳥時代(あすかじだい)」とは、いまの奈良県飛鳥のあたりに都があった時代で、6世紀の終わりから7世紀ごろです。仏教が広まり、中国や朝鮮から進んだ文化が入ってきて、日本が大きく変わっていった時代なのですよ。"},
+  {keys:["古墳","こふん","古墳時代","前の時代"],
+   a:"わたくしが生まれたころは、ちょうど「古墳時代(こふんじだい)」から「飛鳥時代」へとうつるころでした。古墳とは、王や豪族の大きなお墓のことです。やがて大きな古墳をつくる時代はおわり、寺を建てる時代へと変わっていきました。"},
+  {keys:["慧慈との別れ","えじが帰","別れ","先生との別れ","同じ日に"],
+   a:"わたくしの師である慧慈(えじ)は、やがて故郷の高句麗(こうくり)へ帰りました。のちにわたくしが亡くなったと聞いた慧慈は、たいそう悲しみ、「自分も同じ日にあの世で太子に会おう」と誓い、ちょうど一年後に亡くなったと伝わります。"},
+  {keys:["崇峻","すしゅん","暗殺","あんさつ","天皇が殺"],
+   a:"わたくしが摂政になる前、崇峻天皇(すしゅんてんのう)という天皇が、蘇我馬子の手の者によって暗殺される、というおそろしいできごとがありました。そのあと、おばの推古天皇が即位し、わたくしが摂政となって国をささえることになったのです。"},
+  {keys:["用明天皇の即位","父が天皇","585","父の即位"],
+   a:"わたくしの父、用明天皇(ようめいてんのう)は585年に天皇の位につきました。仏教を信じた天皇でしたが、位についてわずか二年ほどで病に倒れ、亡くなりました。父の仏への思いは、わたくしが受けつぎました。"},
+  {keys:["なぜ対立","対立の理由","争いのわけ","蘇我と物部のけんか"],
+   a:"蘇我氏と物部氏が争ったいちばんの理由は、「仏教を受け入れるかどうか」でした。蘇我氏は受け入れたい、物部氏は古くからの神を守りたい——。新しい考えと古い考えのぶつかり合いだったのです。最後は蘇我氏が勝ちました。"},
+  {keys:["来目","くめ","弟","おとうと","将軍","しょうぐん"],
+   a:"わたくしの弟に、来目皇子(くめのみこ)がいました。新羅(しらぎ)へ送る軍の将軍に選ばれましたが、海をわたる準備のさなかに病で亡くなってしまいました。そのため、その遠征は取りやめになったのです。"},
+  {keys:["笏","しゃく","服装","ふくそう","持っている棒","何を持っ","装束"],
+   a:"肖像画のわたくしは、手に「笏(しゃく)」という細長い板を持っています。これは役人が正式な場で手に持つ道具です。ただし、その笏や服装は、わたくしが生きた時代より後のものだという指摘もあるのですよ。"},
+  {keys:["伎楽","ぎがく","音楽","おんがく","おどり","芸能","げいのう","味摩之"],
+   a:"わたくしの時代、百済(くだら)から味摩之(みまし)という人が「伎楽(ぎがく)」という、面をつけて行う音楽とおどりを伝えました。わたくしは少年たちにこれを習わせました。外国の文化も、すすんで取り入れたのですよ。"},
+  {keys:["暦","こよみ","カレンダー","観勒","かんろく","天文","てんもん"],
+   a:"わたくしの時代、観勒(かんろく)というお坊さんが、暦(こよみ)や天文の本を日本に伝えました。わたくしは人をえらんでこれを学ばせました。暦は、田植えや行事の日を決める、くらしに欠かせない大切な知識だったのです。"},
+  {keys:["竹内街道","たけのうち","古い道","最古の道","官道","かんどう"],
+   a:"わたくしは難波(なにわ)から飛鳥まで、まっすぐな大きな道を通しました。これは国がつくった日本でいちばん古い道といわれ、いまの「竹内街道(たけのうちかいどう)」とほぼ同じ道すじです。人やものの行き来をよくするための工夫でした。"},
+  {keys:["山背大兄王のその後","息子の最期","入鹿","いるか","上宮王家","じょうぐうおうけ","血すじ"],
+   a:"わたくしの子、山背大兄王(やましろのおおえのおう)は、わたくしの死後、蘇我入鹿(そがのいるか)に攻められてしまいます。一族(上宮王家・じょうぐうおうけ)は、争いをさけて自ら命を絶ちました。わたくしの血すじは、こうして絶えてしまったのです。"},
+  {keys:["天寿国","てんじゅこく","繡帳","しゅうちょう","刺しゅう","ししゅう"],
+   a:"「天寿国繡帳(てんじゅこくしゅうちょう)」は、わたくしが亡くなったあと、妃たちがわたくしをしのんでつくらせた、刺しゅうの作品です。わたくしが天寿国という仏の世界にいる様子がえがかれ、今も中宮寺に大切に残されています。"},
+  {keys:["聖徳宗","しょうとくしゅう","宗派","しゅうは","本山","ほんざん"],
+   a:"わたくしを開祖(かいそ)とする仏教の宗派(しゅうは)として、「聖徳宗(しょうとくしゅう)」があります。法隆寺がその中心(本山)です。わたくしの仏への思いは、こうして今も受けつがれているのですよ。"},
+  {keys:["夢殿","ゆめどの","八角","はっかく","法隆寺の建物"],
+   a:"法隆寺には「夢殿(ゆめどの)」という、八角形の美しいお堂があります。これはわたくしの住まいだった斑鳩宮の跡に建てられました。中には、わたくしの姿をうつしたといわれる救世観音(ぐぜかんのん)の像がまつられています。"},
+  {keys:["救世観音","ぐぜかんのん","くせかんのん","秘仏","ひぶつ","太子の像"],
+   a:"法隆寺夢殿の救世観音(ぐぜかんのん)は、わたくしの姿に似せてつくられたと伝わる仏像です。長いあいだ布に包まれて見せられない「秘仏(ひぶつ)」でした。今では特別な時期に公開され、多くの人が拝みに来るのですよ。"},
+  {keys:["守屋の最期","もりやがやられ","守屋たおれ","迹見赤檮","矢にあたっ"],
+   a:"物部守屋(もののべのもりや)は、最後の戦いで木の上から指図していましたが、味方の射た矢にあたって亡くなりました。これで強かった物部氏はほろび、仏教が受け入れられる世の中へとうつっていったのです。"},
+  {keys:["勝鬘経","しょうまんぎょう","維摩経","ゆいまぎょう","お経の中身","三つのお経"],
+   a:"わたくしが研究した三つのお経は『法華経』『勝鬘経(しょうまんぎょう)』『維摩経(ゆいまぎょう)』です。とくに勝鬘経は女性の王が説くお経、維摩経はふつうの人が仏の教えを語るお経で、身分にとらわれない教えがこめられています。"},
+  {keys:["お金のこと","大金","たいきん","太子と呼ばれ","お金の別名","何枚"],
+   a:"一万円札に長く使われたため、昔の人は大きなお金のことを「聖徳太子」と呼びました。「太子が何枚」などと言ったのですよ。今ではなつかしい言い方ですが、それだけわたくしの顔が人々に親しまれていたのですね。"},
+  {keys:["もっと","くわしく","調べ方","しらべ方","参考","さんこう","どこで学"],
+   a:"わたくしのことをもっと知りたければ、図書館の歴史の本や、奈良の法隆寺・四天王寺をたずねるのがおすすめです。じっさいに古い建物や仏像を見ると、千四百年前の飛鳥の世が、ぐっと身近に感じられますよ。"}
+];
+
+// 入力にいちばん合う答えをさがす
+function findAnswer(text){
+  const t = (text||"").replace(/\s/g,"");
+  if(!t) return null;
+  let best=null, bestScore=0;
+  for(const item of KB){
+    let score=0;
+    for(const k of item.keys){ if(t.includes(k)) score += k.length; }
+    if(score>bestScore){bestScore=score; best=item;}
+  }
+  return bestScore>0 ? best.a : null;
+}
+
+const NOT_FOUND = [
+  "ふむ、それはわたくしにもよく分からない問いですね。言葉を変えて、もう一度たずねてみてください。たとえば『十七条憲法』『冠位十二階』『遣隋使』などはどうでしょう。",
+  "おや、それについてはおこたえを持ちあわせていないようです。べつの言い方で、もう一度きいてみてくださいね。",
+  "はて、聞きおぼえのない問いです。『法隆寺』や『豊聡耳』のことなら、いくらでもお話しできますよ。"
+];
+
+const GREET = "こんにちは。わたくしが聖徳太子です。飛鳥の世に生き、新しい国づくりに力をつくした者ですよ。聞きたいことを下のますに入力して、リターンを押すか「きく」ボタンをおしてください。なんでもおこたえしましょう。";
+
+// ===== タイプライター表示 =====
+const answerEl = document.getElementById('answer');
+const faceEl = document.getElementById('face');
+let typing=null;
+function speak(text){
+  faceEl.classList.remove('talk'); void faceEl.offsetWidth; faceEl.classList.add('talk');
+  if(typing) clearInterval(typing);
+  answerEl.innerHTML="";
+  let i=0;
+  const cursor=document.createElement('span');
+  cursor.className='cursor'; cursor.textContent='　';
+  answerEl.appendChild(cursor);
+  typing=setInterval(()=>{
+    if(i>=text.length){clearInterval(typing); cursor.remove(); return;}
+    const ch=document.createTextNode(text[i]);
+    answerEl.insertBefore(ch,cursor);
+    i++;
+  },32);
+}
+
+function handleAsk(text){
+  const a = findAnswer(text);
+  if(a){ speak(a); }
+  else{ speak(NOT_FOUND[Math.floor(Math.random()*NOT_FOUND.length)]); }
+}
+
+// ===== 入力イベント =====
+const qEl=document.getElementById('q');
+
+// IME（日本語入力）の変換確定中かどうかを記録する
+let composing=false;
+qEl.addEventListener('compositionstart',()=>{ composing=true; });
+qEl.addEventListener('compositionend',()=>{ composing=false; });
+
+document.getElementById('askBtn').onclick=()=>handleAsk(qEl.value);
+qEl.addEventListener('keydown',e=>{
+  // 漢字変換などの確定リターンでは送信しない。
+  // 変換が確定し、ふつうにリターンを押したときだけ質問を送る。
+  if(e.key==='Enter' && !composing && !e.isComposing){
+    handleAsk(qEl.value);
+  }
+});
+
+// 最初のあいさつ
+speak(GREET);
+
+// ===== クイズモード =====
+const QUIZ = [
+  {q:"聖徳太子が生きたのは、何という時代でしょう？",opts:["飛鳥時代","平安時代","江戸時代"],a:0,exp:"わたくしの時代は「飛鳥時代」です。"},
+  {q:"聖徳太子の本名（といわれる名前）はどれ？",opts:["厩戸王（うまやとおう）","中大兄皇子","織田信長"],a:0,exp:"「厩戸王」「厩戸皇子」と呼ばれました。"},
+  {q:"聖徳太子がおたすけした、日本で初めての女性の天皇は？",opts:["推古天皇","天智天皇","聖武天皇"],a:0,exp:"わたくしのおばにあたる推古天皇です。"},
+  {q:"才能のある人を役人に取り立てるために定めた、12の位の制度は？",opts:["冠位十二階","参勤交代","墾田永年私財法"],a:0,exp:"603年に定めた冠位十二階です。"},
+  {q:"604年に定めた、役人の心がまえを示したきまりは？",opts:["十七条憲法","大宝律令","武家諸法度"],a:0,exp:"十七条憲法です。罰ではなく心のおしえですよ。"},
+  {q:"十七条憲法の第一条「和を以て○しと為す」。○に入る字は？",opts:["貴（とうと）","楽（たの）","苦（くる）"],a:0,exp:"「和を以て貴しと為す」。仲よくが大切、という意味です。"},
+  {q:"聖徳太子が中国の隋へ送った使者を何という？",opts:["遣隋使","遣唐使","遣明使"],a:0,exp:"隋へ送ったので「遣隋使」です。"},
+  {q:"遣隋使として隋へわたった人物は？",opts:["小野妹子","坂本龍馬","行基"],a:0,exp:"小野妹子です。名は妹子ですが、りっぱな男の人ですよ。"},
+  {q:"隋へ送った手紙の「日出る処の○○」。○○は？",opts:["天子","将軍","大名"],a:0,exp:"「日出る処の天子」。対等につき合おうとした言葉です。"},
+  {q:"聖徳太子が今の大阪に建てたお寺は？",opts:["四天王寺","東大寺","金閣寺"],a:0,exp:"戦いの誓いを守って建てた四天王寺です。"},
+  {q:"奈良県斑鳩町にある、今に残る世界最古の木造建築で有名なお寺は？",opts:["法隆寺","清水寺","平等院"],a:0,exp:"法隆寺です。世界遺産にもなっています。"},
+  {q:"聖徳太子が仏教を広めるとき、味方した豪族は？",opts:["蘇我氏","物部氏","藤原氏"],a:0,exp:"蘇我馬子と力を合わせました。"},
+  {q:"仏教に反対し、聖徳太子たちと戦った人物は？",opts:["物部守屋","蘇我馬子","中臣鎌足"],a:0,exp:"物部守屋です。この戦いに勝ちました。"},
+  {q:"たくさんの人の話を一度に聞き分けたことから、何と呼ばれた？",opts:["豊聡耳（とよとみみ）","福の神","雷さま"],a:0,exp:"耳がよくさとい、という意味の豊聡耳です。"},
+  {q:"冠位十二階を定めたのは何年？",opts:["603年","710年","1192年"],a:0,exp:"603年です。翌年に十七条憲法ですよ。"},
+  {q:"十七条憲法を定めたのは何年？",opts:["604年","645年","794年"],a:0,exp:"604年です。"},
+  {q:"三宝とは「仏・法・○」。○は？",opts:["僧（おぼうさん）","神","王"],a:0,exp:"仏・法・僧の三つを三宝といいます。"},
+  {q:"聖徳太子は長く日本のお札にえがかれた。最も多く登場した回数は？",opts:["7回","1回","20回"],a:0,exp:"百円から一万円まで、あわせて7回。日本一です。"},
+  {q:"摂政という役目は、だれをたすける役目？",opts:["天皇","将軍","大名"],a:0,exp:"天皇をたすける役目です。"},
+  {q:"聖徳太子と協力して政治をした、力のある大臣は？",opts:["蘇我馬子","徳川家康","平清盛"],a:0,exp:"蘇我馬子です。親せきでもありました。"},
+  {q:"聖徳太子が亡くなったのは、およそ何歳？",opts:["49歳","20歳","90歳"],a:0,exp:"享年49。志なかばの別れでした。"},
+  {q:"聖徳太子のお墓があるのは、今のどこ？",opts:["大阪府","北海道","沖縄県"],a:0,exp:"大阪府太子町の叡福寺にあります。"},
+  {q:"仏教は、朝鮮半島のどの国から日本に伝わった？",opts:["百済（くだら）","新羅","アメリカ"],a:0,exp:"百済から伝わりました。"},
+  {q:"聖徳太子の死後、645年に起きた政治の改革は？",opts:["大化の改新","明治維新","応仁の乱"],a:0,exp:"大化の改新。太子たちのまいた種が実りました。"}
+];
+
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+let quizSet=[], quizIdx=0, quizScore=0;
+const elQStart=document.getElementById('quiz-start');
+const elQPlay=document.getElementById('quiz-play');
+const elQEnd=document.getElementById('quiz-end');
+const elQCount=document.getElementById('quiz-count');
+const elQScoreLive=document.getElementById('quiz-score-live');
+const elQQ=document.getElementById('quiz-q');
+const elQOpts=document.getElementById('quiz-opts');
+const elQFb=document.getElementById('quiz-feedback');
+const elQNext=document.getElementById('quizNextBtn');
+
+function startQuiz(){
+  quizSet=shuffle(QUIZ).slice(0,10);
+  quizIdx=0; quizScore=0;
+  elQStart.style.display='none'; elQEnd.style.display='none'; elQPlay.style.display='block';
+  renderQ();
+}
+function renderQ(){
+  const item=quizSet[quizIdx];
+  const correctText=item.opts[item.a];
+  elQCount.textContent='第'+(quizIdx+1)+'問 ／ 全'+quizSet.length+'問';
+  elQScoreLive.textContent='正かい：'+quizScore;
+  elQQ.textContent=item.q;
+  elQFb.innerHTML='';
+  elQNext.style.display='none';
+  elQOpts.innerHTML='';
+  shuffle(item.opts).forEach(optText=>{
+    const b=document.createElement('button');
+    b.className='opt'; b.textContent=optText;
+    b.onclick=()=>chooseOpt(optText===correctText,b,correctText,item.exp);
+    elQOpts.appendChild(b);
+  });
+}
+function chooseOpt(isCorrect,btn,correctText,exp){
+  elQOpts.querySelectorAll('.opt').forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===correctText) b.classList.add('correct');
+  });
+  if(isCorrect){
+    quizScore++;
+    elQFb.innerHTML='<span class="mark ok">〇</span>せいかい！ '+exp;
+  }else{
+    btn.classList.add('wrong');
+    elQFb.innerHTML='<span class="mark ng">✕</span>おしい！ こたえは「'+correctText+'」。'+exp;
+  }
+  elQScoreLive.textContent='正かい：'+quizScore;
+  elQNext.style.display='inline-block';
+  elQNext.textContent=(quizIdx+1>=quizSet.length)?'けっかを みる':'つぎへ';
+}
+elQNext.onclick=()=>{
+  quizIdx++;
+  if(quizIdx>=quizSet.length){ endQuiz(); } else { renderQ(); }
+};
+function endQuiz(){
+  elQPlay.style.display='none'; elQEnd.style.display='block';
+  const n=quizScore, total=quizSet.length;
+  document.getElementById('quiz-result-score').textContent=n+' ／ '+total+' 問せいかい';
+  let c;
+  if(n===total) c='お見事！ すべて正かいです。飛鳥の世のことを、本当によく学びましたね。';
+  else if(n>=Math.ceil(total*0.7)) c='たいへんよくできました。あと少しで満点ですよ。';
+  else if(n>=Math.ceil(total*0.4)) c='その調子です。「もんどう」でわたくしに聞いて、また挑戦してみてください。';
+  else c='だいじょうぶ。何度でも挑戦できます。まずは「もんどう」で、いっしょに学びましょう。';
+  document.getElementById('quiz-result-comment').textContent=c;
+}
+document.getElementById('quizStartBtn').onclick=startQuiz;
+document.getElementById('quizRetryBtn').onclick=startQuiz;
+
+// ===== 年表モード =====
+const TIMELINE=[
+  {year:"574年",title:"誕生",desc:"いまの奈良県・飛鳥に生まれる。本名は厩戸王（うまやとおう）。"},
+  {year:"585年",title:"父・用明天皇が即位",desc:"父が天皇の位につくが、二年ほどで亡くなる。"},
+  {year:"587年",title:"物部守屋との戦い（丁未の変）",desc:"仏教をめぐる争いに、蘇我馬子の側で勝つ。"},
+  {year:"592年",title:"崇峻天皇が暗殺される",desc:"天皇が蘇我馬子の手の者に殺される事件が起こる。"},
+  {year:"593年",title:"推古天皇が即位・太子が摂政に",desc:"日本初の女帝をたすける摂政となる。誓いを守り四天王寺を建てる。"},
+  {year:"594年",title:"仏教興隆の詔",desc:"「仏教をさかんにしなさい」という命令が出される。"},
+  {year:"603年",title:"冠位十二階を定める",desc:"才能のある人を役人にえらぶ、12の位の制度をつくる。"},
+  {year:"604年",title:"十七条憲法を定める",desc:"「和を以て貴しと為す」など、役人の心がまえを示す。"},
+  {year:"605年",title:"斑鳩宮に移り住む",desc:"法隆寺のそばの斑鳩に、住まいをつくって暮らす。"},
+  {year:"607年",title:"遣隋使を送る・法隆寺を建てる",desc:"小野妹子を隋へ。「日出る処の天子」の手紙をとどける。"},
+  {year:"608年",title:"隋から裴世清が来る",desc:"隋からお返しの使者が日本をおとずれ、交流が深まる。"},
+  {year:"615年ごろ",title:"三経義疏が完成（伝）",desc:"三つのお経の解説書を書いたと伝えられる。"},
+  {year:"620年",title:"国記・天皇記を編さん",desc:"蘇我馬子とともに、国の歴史の本をつくる。"},
+  {year:"622年",title:"斑鳩宮で亡くなる",desc:"享年49。前日に亡くなった妃とともにねむる。"},
+  {year:"645年",title:"〔参考〕大化の改新",desc:"太子の死後の政治改革。太子たちのまいた種が実っていく。",future:true}
+];
+const tlEl=document.getElementById('timeline');
+TIMELINE.forEach(ev=>{
+  const item=document.createElement('div');
+  item.className='tl-item'+(ev.future?' future':'');
+  item.innerHTML='<div class="tl-year">'+ev.year+'</div>'+
+    '<div class="tl-body"><div class="tl-title">'+ev.title+'</div>'+
+    '<div class="tl-desc">'+ev.desc+'</div></div>';
+  tlEl.appendChild(item);
+});
+
+// ===== タブ切りかえ =====
+const tabBtns=document.querySelectorAll('.tab');
+const views={
+  qa:document.getElementById('view-qa'),
+  quiz:document.getElementById('view-quiz'),
+  timeline:document.getElementById('view-timeline')
+};
+tabBtns.forEach(tab=>{
+  tab.onclick=()=>{
+    tabBtns.forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    Object.values(views).forEach(v=>v.classList.remove('active'));
+    views[tab.dataset.view].classList.add('active');
+  };
+});
+</script>
+</body>
+</html>
