@@ -104,15 +104,24 @@
     border:5px solid var(--kin);
     box-shadow:0 0 0 4px var(--sumi),0 10px 30px rgba(0,0,0,.5);
     position:relative;
-    transition:transform .25s;
   }
-  .face img{
-    width:100%;height:100%;
+  /* 口（顔）の絵。閉じた絵と開いた絵を、ぴったり同じ位置に重ねる
+     → 位置をずらさないので、縦にも横にも揺れずに口だけ動く */
+  .face .mouth{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
     object-fit:cover;
     display:block;
   }
+  .face .mouth.closed{ z-index:1; }           /* 口を閉じた絵（下にしく） */
+  .face .mouth.open{ z-index:2; opacity:0; }  /* 口を開けた絵（ふだんは透明） */
+  .face.talking-open .mouth.open{ opacity:1; }/* しゃべる瞬間だけ見える */
+  .face.no-img .mouth{ display:none; }
   .face-fallback{
     display:none;
+    position:absolute;inset:0;z-index:3;
     width:100%;height:100%;
     align-items:center;justify-content:center;
     font-family:'Yuji Syuku',serif;
@@ -121,8 +130,6 @@
     background:radial-gradient(circle at 50% 38%, #3a2c4d, #181423);
   }
   .face.no-img .face-fallback{display:flex;}
-  .face.talk{animation:nod .6s ease;}
-  @keyframes nod{0%,100%{transform:translateY(0)}30%{transform:translateY(6px) rotate(-2deg)}60%{transform:translateY(0) rotate(2deg)}}
   .name-tag{
     margin-top:10px;font-family:'Yuji Syuku',serif;
     font-size:clamp(16px,2vw,24px);color:var(--kin-akarui);letter-spacing:.1em;
@@ -294,8 +301,13 @@
     <div class="stage">
       <div class="taishi">
         <div class="face" id="face">
-          <img src="https://github.com/byakusen/gogelgelge.shoutoku_taisi_kun/blob/main/shoutokutaisi.png?raw=true" alt="聖徳太子"
-               onerror="this.style.display='none';this.parentNode.classList.add('no-img');">
+          <img class="mouth closed"
+               src="https://github.com/byakusen/gogelgelge.shoutoku_taisi_kun/blob/main/shoutokutaisi.png?raw=true"
+               alt="聖徳太子（口を閉じた絵）"
+               onerror="this.closest('.face').classList.add('no-img');">
+          <img class="mouth open"
+               src="https://github.com/byakusen/ssfgeoge.shoutaokutaisi_kun/blob/main/taisi2.png?raw=true"
+               alt="" aria-hidden="true">
           <span class="face-fallback">聖<br>徳<br>太<br>子</span>
         </div>
         <div class="name-tag">聖徳太子</div>
@@ -586,17 +598,31 @@ const GREET = "こんにちは。わたくしが聖徳太子です。飛鳥の�
 // ===== タイプライター表示 =====
 const answerEl = document.getElementById('answer');
 const faceEl = document.getElementById('face');
+
+// ----- 口パク（しゃべっている間だけ口を開け閉めする）-----
+let mouthTimer = null;
+function startMouth(){
+  stopMouth();  // 念のため、前のうごきを止めてから始める
+  mouthTimer = setInterval(()=>{
+    faceEl.classList.toggle('talking-open');
+  }, 130);      // 0.13秒ごとに口を開け閉め
+}
+function stopMouth(){
+  if(mouthTimer){ clearInterval(mouthTimer); mouthTimer = null; }
+  faceEl.classList.remove('talking-open');  // 最後は口を閉じた絵にもどす
+}
+
 let typing=null;
 function speak(text){
-  faceEl.classList.remove('talk'); void faceEl.offsetWidth; faceEl.classList.add('talk');
   if(typing) clearInterval(typing);
   answerEl.innerHTML="";
+  startMouth();                 // 文字を出している間、口を動かしはじめる
   let i=0;
   const cursor=document.createElement('span');
   cursor.className='cursor'; cursor.textContent='　';
   answerEl.appendChild(cursor);
   typing=setInterval(()=>{
-    if(i>=text.length){clearInterval(typing); cursor.remove(); return;}
+    if(i>=text.length){clearInterval(typing); cursor.remove(); stopMouth(); return;}  // 表示し終わったら口を止める
     const ch=document.createTextNode(text[i]);
     answerEl.insertBefore(ch,cursor);
     i++;
