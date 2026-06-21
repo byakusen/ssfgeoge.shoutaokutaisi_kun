@@ -264,6 +264,57 @@
   .tl-item.future .tl-year{color:#c9a9ec;}
   .tl-note{font-size:clamp(12px,1.5vw,16px);color:var(--sumi-usu);margin-top:4px;letter-spacing:.04em;line-height:1.6;}
 
+  /* 冠位十二階 */
+  .kanui-intro{font-size:clamp(15px,1.9vw,21px);line-height:1.7;color:var(--washi);}
+  .kanui-say{
+    background:linear-gradient(180deg,var(--washi),var(--washi-kage));
+    color:var(--sumi);border:2px solid var(--kin);border-radius:12px;
+    padding:14px 18px;min-height:64px;
+    font-family:'Klee One',serif;font-weight:600;
+    font-size:clamp(16px,2vw,22px);line-height:1.6;
+    display:flex;align-items:center;gap:10px;
+  }
+  .kanui-say .who{font-family:'Yuji Syuku',serif;color:var(--aka-fuka);flex:0 0 auto;}
+  .kanui-ladder{display:flex;flex-direction:column;gap:5px;}
+  .kanui-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:13px 20px;border-radius:8px;cursor:pointer;
+    border:1px solid rgba(120,110,90,.5);
+    font-family:'Zen Maru Gothic',sans-serif;
+    transition:transform .1s,box-shadow .1s;
+  }
+  .kanui-bar:hover{transform:translateX(4px);box-shadow:0 3px 10px rgba(0,0,0,.35);}
+  .kanui-bar.on{box-shadow:0 0 0 3px var(--kin-akarui);}
+  .kanui-bar .rank{font-weight:700;font-size:clamp(16px,2vw,22px);}
+  .kanui-bar .col{font-size:clamp(13px,1.6vw,18px);opacity:.92;}
+  .kanui-arrowtop,.kanui-arrowbtm{text-align:center;color:var(--sumi-usu);font-size:clamp(12px,1.5vw,16px);letter-spacing:.1em;}
+  .kanui-arrowtop{margin-bottom:5px;}
+  .kanui-arrowbtm{margin-top:5px;}
+
+  /* 十七条憲法 */
+  .kenpou-card{
+    background:linear-gradient(180deg,var(--washi),var(--washi-kage));
+    color:var(--sumi);border:2px solid var(--kin);border-radius:14px;
+    padding:26px 30px;box-shadow:0 12px 34px rgba(0,0,0,.45);text-align:center;
+  }
+  .kenpou-no{font-family:'Yuji Syuku',serif;font-size:clamp(26px,4vw,44px);color:var(--aka-fuka);letter-spacing:.08em;}
+  .kenpou-gen{font-family:'Klee One',serif;font-weight:600;font-size:clamp(20px,2.7vw,30px);line-height:1.75;margin:18px 0;min-height:2.2em;}
+  .kenpou-moto{font-size:clamp(14px,1.8vw,19px);color:var(--murasaki);font-weight:700;letter-spacing:.04em;min-height:1.4em;}
+  .kenpou-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;}
+  .kenpou-count{font-weight:700;color:var(--aka-fuka);font-size:clamp(15px,1.8vw,20px);}
+  .kenpou-btn{
+    font-family:'Yuji Syuku',serif;font-size:clamp(16px,2vw,24px);
+    padding:12px 24px;border:none;border-radius:10px;cursor:pointer;
+    background:linear-gradient(180deg,var(--aka),var(--aka-fuka));color:var(--washi);
+    box-shadow:0 4px 0 #511712,0 6px 14px rgba(0,0,0,.4);transition:transform .08s;
+  }
+  .kenpou-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #511712;}
+  .kenpou-btn:disabled{opacity:.4;cursor:default;box-shadow:none;}
+  .kenpou-dots{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:18px;}
+  .kenpou-dot{width:13px;height:13px;border-radius:50%;background:rgba(120,80,40,.18);border:1px solid var(--kin);cursor:pointer;transition:transform .1s;}
+  .kenpou-dot:hover{transform:scale(1.2);}
+  .kenpou-dot.on{background:var(--aka);border-color:var(--aka-fuka);}
+
   footer{
     position:relative;z-index:2;text-align:center;
     font-size:13px;color:rgba(244,234,214,.4);
@@ -290,6 +341,8 @@
 
   <nav class="tabs">
     <button class="tab active" data-view="qa">もんどう</button>
+    <button class="tab" data-view="kanui">冠位十二階</button>
+    <button class="tab" data-view="kenpou">十七条</button>
     <button class="tab" data-view="quiz">クイズ</button>
     <button class="tab" data-view="timeline">ねんぴょう</button>
   </nav>
@@ -322,6 +375,36 @@
         <button class="btn-ask" id="askBtn">きく</button>
       </div>
     </div>
+    </section>
+
+    <section id="view-kanui" class="view">
+      <div class="ask-zone">
+        <div class="kanui-intro">才能のある人を役人にえらぶため、603年に太子が定めたしくみです。位を十二に分け、それぞれちがう色の冠(かんむり)をかぶらせました。下の冠をタップしてみてください。</div>
+      </div>
+      <div class="kanui-say"><span class="who">太子くん：</span><span id="kanui-say-text">下の十二の冠をタップすると、せつめいするよ。</span></div>
+      <div>
+        <div class="kanui-arrowtop">▲ 位が高い</div>
+        <div class="kanui-ladder" id="kanui-ladder"></div>
+        <div class="kanui-arrowbtm">▼ 位が低い</div>
+      </div>
+      <p class="tl-note">※冠の色は、おもに後の世に言い伝えられた説にもとづくものです。</p>
+    </section>
+
+    <section id="view-kenpou" class="view">
+      <div class="ask-zone">
+        <div class="kanui-intro">604年に太子が定めた、役人の心がまえ。罰(ばつ)ではなく「こういう心で働きなさい」というおしえです。やさしいことばで、全十七条を読んでみましょう。</div>
+      </div>
+      <div class="kenpou-card">
+        <div class="kenpou-no" id="kenpou-no"></div>
+        <div class="kenpou-gen" id="kenpou-gen"></div>
+        <div class="kenpou-moto" id="kenpou-moto"></div>
+        <div class="kenpou-nav">
+          <button class="kenpou-btn" id="kenpou-prev">まえへ</button>
+          <span class="kenpou-count" id="kenpou-count"></span>
+          <button class="kenpou-btn" id="kenpou-next">つぎへ</button>
+        </div>
+        <div class="kenpou-dots" id="kenpou-dots"></div>
+      </div>
     </section>
 
     <section id="view-quiz" class="view">
@@ -778,10 +861,90 @@ TIMELINE.forEach(ev=>{
   tlEl.appendChild(item);
 });
 
+// ===== 冠位十二階モード =====
+const KANUI=[
+  {rank:"大徳（だいとく）",col:"こいむらさき",bg:"#5b3a8a",fg:"#f6efdd",note:"いちばん高い位です。「徳(とく)」は人としての立派さのこと。家がらではなく、力や手がらでこの位につけたのが、新しいところですよ。"},
+  {rank:"小徳（しょうとく）",col:"うすむらさき",bg:"#9b7fc4",fg:"#241c2e",note:"「徳」の位の、大徳につぐ二番目。冠の色は、大徳とおなじむらさきの、すこしうすい色にしました。"},
+  {rank:"大仁（だいにん）",col:"こいあお",bg:"#2b5f9e",fg:"#f6efdd",note:"「仁(じん)」は、人を思いやる心のこと。徳のつぎに高い位で、冠の色はあおですよ。"},
+  {rank:"小仁（しょうにん）",col:"うすあお",bg:"#6f9fd4",fg:"#241c2e",note:"「仁」の位の、小のほう。うすいあおの冠をかぶります。"},
+  {rank:"大礼（だいらい）",col:"こいあか",bg:"#b8402e",fg:"#f6efdd",note:"「礼(れい)」は、れいぎ正しさのこと。冠の色はあかですよ。"},
+  {rank:"小礼（しょうらい）",col:"うすあか",bg:"#e08070",fg:"#241c2e",note:"「礼」の位の、小のほう。うすいあかの冠です。"},
+  {rank:"大信（だいしん）",col:"こいき",bg:"#c8902f",fg:"#241c2e",note:"「信(しん)」は、うそをつかないまことの心。冠の色はきいろです。"},
+  {rank:"小信（しょうしん）",col:"うすき",bg:"#ecc873",fg:"#241c2e",note:"「信」の位の、小のほう。うすいきいろの冠ですよ。"},
+  {rank:"大義（だいぎ）",col:"しろ",bg:"#e7ddc6",fg:"#241c2e",note:"「義(ぎ)」は、正しいおこないのこと。冠の色はしろです。"},
+  {rank:"小義（しょうぎ）",col:"うすしろ",bg:"#f6f0e2",fg:"#241c2e",note:"「義」の位の、小のほう。うすいしろの冠をかぶります。"},
+  {rank:"大智（だいち）",col:"くろ",bg:"#2a2533",fg:"#f6efdd",note:"「智(ち)」は、かしこさ・知恵のこと。冠の色はくろですよ。"},
+  {rank:"小智（しょうち）",col:"こいはいいろ",bg:"#565163",fg:"#f6efdd",note:"いちばん下の位です。それでも、家がらに関係なく力でこの位につけるのですから、当時の人にとっては大きな望みだったのです。"}
+];
+const ladderEl=document.getElementById('kanui-ladder');
+const kanuiSay=document.getElementById('kanui-say-text');
+KANUI.forEach(r=>{
+  const bar=document.createElement('div');
+  bar.className='kanui-bar';
+  bar.style.background=r.bg; bar.style.color=r.fg;
+  bar.innerHTML='<span class="rank">'+r.rank+'</span><span class="col">'+r.col+'</span>';
+  bar.onclick=()=>{
+    ladderEl.querySelectorAll('.kanui-bar').forEach(b=>b.classList.remove('on'));
+    bar.classList.add('on');
+    kanuiSay.textContent=r.note;
+  };
+  ladderEl.appendChild(bar);
+});
+
+// ===== 十七条憲法モード =====
+const KENPOU=[
+  {gen:"和(わ)を大切にして、あらそわないこと。みんなで仲よく力を合わせるのが、何よりも大事です。",moto:"和を以て貴しと為す"},
+  {gen:"仏(ほとけ)・法(おしえ)・僧(おぼうさん)の三宝を、あつく敬(うやま)いなさい。",moto:"篤く三宝を敬え"},
+  {gen:"天皇(てんのう)の命令を受けたら、かならず守りなさい。",moto:"詔を承りては必ず謹め"},
+  {gen:"役人は、れいぎ正しくふるまいなさい。礼(れい)が、国をおさめるもとになります。",moto:"礼を以て本と為せ"},
+  {gen:"裁判(さいばん)は、公平におこないなさい。おくり物(わいろ)を受け取って決めてはいけません。",moto:""},
+  {gen:"悪いおこないをこらしめ、よいおこないをすすめなさい。",moto:""},
+  {gen:"人には、それぞれ合った役目があります。ふさわしい人を、ふさわしい仕事につけなさい。",moto:""},
+  {gen:"役人は、朝は早くから出て、夕方はおそくまで、しっかり働きなさい。",moto:""},
+  {gen:"まこと(信)を大切にしなさい。何ごとも、まことが土台になります。",moto:"信は是れ義の本なり"},
+  {gen:"自分と考えがちがっても、おこってはいけません。人それぞれ、考えはちがうものです。",moto:""},
+  {gen:"手がらとあやまちを、よく見なさい。ほうびとばつを、正しくあたえなさい。",moto:""},
+  {gen:"地方の役人が、民から勝手に物を取り立ててはいけません。",moto:""},
+  {gen:"役人は、自分の仕事だけでなく、ほかの人の仕事もよく分かっておきなさい。",moto:""},
+  {gen:"人をうらやんだり、ねたんだりしてはいけません。",moto:""},
+  {gen:"自分のことより、みんな(公・おおやけ)のためを思って働くのが、役人の道です。",moto:"私に背きて公に向く"},
+  {gen:"民を働かせるときは、時期(じき)をえらびなさい。田や畑がいそがしい時は、さけなさい。",moto:""},
+  {gen:"大事なことは、一人で決めてはいけません。かならず、みんなで話し合って決めなさい。",moto:"独り断むべからず"}
+];
+let kenIdx=0;
+const kanji=['','一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五','十六','十七'];
+const kNo=document.getElementById('kenpou-no');
+const kGen=document.getElementById('kenpou-gen');
+const kMoto=document.getElementById('kenpou-moto');
+const kCount=document.getElementById('kenpou-count');
+const kPrev=document.getElementById('kenpou-prev');
+const kNext=document.getElementById('kenpou-next');
+const kDots=document.getElementById('kenpou-dots');
+KENPOU.forEach((_,i)=>{
+  const d=document.createElement('div'); d.className='kenpou-dot';
+  d.onclick=()=>{ kenIdx=i; renderKen(); };
+  kDots.appendChild(d);
+});
+function renderKen(){
+  const it=KENPOU[kenIdx];
+  kNo.textContent='第'+kanji[kenIdx+1]+'条';
+  kGen.textContent=it.gen;
+  kMoto.textContent=it.moto ? ('もとの言葉：「'+it.moto+'」') : '';
+  kCount.textContent=(kenIdx+1)+' ／ 17';
+  kPrev.disabled=(kenIdx===0);
+  kNext.disabled=(kenIdx===KENPOU.length-1);
+  kDots.querySelectorAll('.kenpou-dot').forEach((d,i)=>d.classList.toggle('on',i===kenIdx));
+}
+kPrev.onclick=()=>{ if(kenIdx>0){ kenIdx--; renderKen(); } };
+kNext.onclick=()=>{ if(kenIdx<KENPOU.length-1){ kenIdx++; renderKen(); } };
+renderKen();
+
 // ===== タブ切りかえ =====
 const tabBtns=document.querySelectorAll('.tab');
 const views={
   qa:document.getElementById('view-qa'),
+  kanui:document.getElementById('view-kanui'),
+  kenpou:document.getElementById('view-kenpou'),
   quiz:document.getElementById('view-quiz'),
   timeline:document.getElementById('view-timeline')
 };
